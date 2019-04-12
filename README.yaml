@@ -1,0 +1,22 @@
+name: miquido-iam-roles
+bitbucket_repo: miquido/terraform-iam-roles
+badges: []
+related: []
+description: |-
+  This module provisions:
+
+  - a role `AdministratorAccess` with administrator access policy to assume from authentication account
+  - a role `ReadOnlyAccess` with read only access policy to assume from authentication account
+usage: |-
+  ```hcl
+  module "iam-roles" {
+    source = "git::ssh://git@bitbucket.org/miquido/terraform-iam-roles.git?ref=1.0.0"
+    authentication_account_no = "xxxxx"
+  }
+  ```
+include:
+  - "docs/targets.md"
+  - "docs/terraform.md"
+contributors:
+  - name: "Konrad Obal"
+    github: "k911"
