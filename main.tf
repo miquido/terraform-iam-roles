@@ -1,8 +1,13 @@
 # Administrator access
 
+locals {
+  tags = "${merge(map("Provisioned-By", "Miquido"), local.tags)}"
+}
+
+
 resource "aws_iam_role" "administrator-access" {
   name = "AdministratorAccess"
-  tags = "${var.tags}"
+  tags = "${local.tags}"
 
   assume_role_policy = <<EOF
 {
@@ -71,7 +76,7 @@ resource "aws_iam_role_policy_attachment" "deny-ct-write-attach" {
 
 resource "aws_iam_role" "readonly-access" {
   name = "ReadOnlyAccess"
-  tags = "${var.tags}"
+  tags = "${local.tags}"
 
   assume_role_policy = <<EOF
 {
@@ -102,4 +107,59 @@ data "aws_iam_policy" "readonly-access" {
 resource "aws_iam_role_policy_attachment" "readonly-access-attach" {
   role       = "${aws_iam_role.readonly-access.name}"
   policy_arn = "${data.aws_iam_policy.readonly-access.arn}"
+}
+
+# Alexa developer
+
+resource "aws_iam_role" "alexa-developer" {
+  name = "AlexaDeveloper"
+  tags = "${local.tags}"
+
+  assume_role_policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "",
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": "arn:aws:iam::${var.authentication_account_no}:root"
+      },
+      "Action": "sts:AssumeRole",
+      "Condition": {
+        "Bool": {
+          "aws:MultiFactorAuthPresent": "true"
+        }
+      }
+    }
+  ]
+}
+EOF
+}
+
+data "aws_iam_policy" "lex-full-access" {
+  arn = "arn:aws:iam::aws:policy/AmazonLexFullAccess"
+}
+
+data "aws_iam_policy" "alexa-full-access" {
+  arn = "arn:aws:iam::aws:policy/AlexaForBusinessFullAccess"
+}
+
+data "aws_iam_policy" "lambda-full-access" {
+  arn = "arn:aws:iam::aws:policy/AWSLambdaFullAccess"
+}
+
+resource "aws_iam_role_policy_attachment" "alexa-developer-alexa-full-access-attach" {
+  role       = "${aws_iam_role.alexa-developer.name}"
+  policy_arn = "${data.aws_iam_policy.alexa-full-access.arn}"
+}
+
+resource "aws_iam_role_policy_attachment" "alexa-developer-lex-full-access-attach" {
+  role       = "${aws_iam_role.alexa-developer.name}"
+  policy_arn = "${data.aws_iam_policy.lex-full-access.arn}"
+}
+
+resource "aws_iam_role_policy_attachment" "alexa-developer-lambda-full-access-attach" {
+  role       = "${aws_iam_role.alexa-developer.name}"
+  policy_arn = "${data.aws_iam_policy.lambda-full-access.arn}"
 }

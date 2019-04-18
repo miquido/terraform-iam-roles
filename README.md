@@ -2,15 +2,23 @@
 [![Miquido][logo]](https://www.miquido.com/)
 
 # miquido-iam-roles
-This module provisions:
+Roles provisioned by module:
 
-- a role `AdministratorAccess` with administrator access policy to assume from authentication account
-- a role `ReadOnlyAccess` with read only access policy to assume from authentication account
+- `AdministratorAccess`
+
+    administrator access policy to assume from authentication account
+
+- `ReadOnlyAccess`
+
+    read only access policy to assume from authentication account
+
+- `AlexaDeveloper`
+
+    full access policy to: `Lambda`, `Lex` and `Alexa` to assume from authentication account
 ---
-
-
 Terraform Module
 
+BitBucket Repository: https://bitbucket.org/miquido/terraform-iam-roles
 ## Usage
 
 ```hcl
@@ -83,3 +91,4 @@ Copyright © 2017-2019 [Miquido](https://miquido.com)
   [logo]: https://www.miquido.com/img/logos/logo__miquido.svg
   [website]: https://www.miquido.com/
   [github]: https://github.com/miquido
+  [bitbucket]: https://bitbucket.org/miquido

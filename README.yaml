@@ -3,10 +3,19 @@ bitbucket_repo: miquido/terraform-iam-roles
 badges: []
 related: []
 description: |-
-  This module provisions:
+  Roles provisioned by module:
 
-  - a role `AdministratorAccess` with administrator access policy to assume from authentication account
-  - a role `ReadOnlyAccess` with read only access policy to assume from authentication account
+  - `AdministratorAccess`
+
+      administrator access policy to assume from authentication account
+
+  - `ReadOnlyAccess`
+
+      read only access policy to assume from authentication account
+
+  - `AlexaDeveloper`
+
+      full access policy to: `Lambda`, `Lex` and `Alexa` to assume from authentication account
 usage: |-
   ```hcl
   module "iam-roles" {
