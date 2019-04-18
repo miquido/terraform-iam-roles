@@ -1,7 +1,7 @@
 # Administrator access
 
 locals {
-  tags = "${merge(map("Provisioned-By", "Miquido"), local.tags)}"
+  tags = "${merge(var.tags, map("Provisioned-By", "Miquido-IAM-Roles"))}"
 }
 
 
