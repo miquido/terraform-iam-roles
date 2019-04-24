@@ -44,24 +44,24 @@ resource "aws_iam_policy" "deny-ct-write" {
 
   policy = <<EOF
 {
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Sid": "",
-            "Effect": "Deny",
-            "Action": [
-                "cloudtrail:PutEventSelectors",
-                "cloudtrail:StopLogging",
-                "cloudtrail:StartLogging",
-                "cloudtrail:AddTags",
-                "cloudtrail:DeleteTrail",
-                "cloudtrail:UpdateTrail",
-                "cloudtrail:CreateTrail",
-                "cloudtrail:RemoveTags"
-            ],
-            "Resource": "*"
-        }
-    ]
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "",
+      "Effect": "Deny",
+      "Action": [
+        "cloudtrail:PutEventSelectors",
+        "cloudtrail:StopLogging",
+        "cloudtrail:StartLogging",
+        "cloudtrail:AddTags",
+        "cloudtrail:DeleteTrail",
+        "cloudtrail:UpdateTrail",
+        "cloudtrail:CreateTrail",
+        "cloudtrail:RemoveTags"
+      ],
+      "Resource": "*"
+    }
+  ]
 }
 EOF
 }
@@ -148,6 +148,57 @@ data "aws_iam_policy" "lambda-full-access" {
   arn = "arn:aws:iam::aws:policy/AWSLambdaFullAccess"
 }
 
+resource "aws_iam_policy" "cloudformation-full-access" {
+  name = "CloudFormationFullAccess"
+
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "cloudformation:Describe*",
+        "cloudformation:EstimateTemplateCost",
+        "cloudformation:Get*",
+        "cloudformation:List*",
+        "cloudformation:ValidateTemplate",
+        "cloudformation:DetectStackDrift",
+        "cloudformation:DetectStackResourceDrift",
+        "cloudformation:CreateChangeSet",
+        "cloudformation:ExecuteChangeSet",
+        "cloudformation:DeleteStack",
+      ],
+      "Resource": "*"
+    }
+  ]
+}
+EOF
+}
+
+resource "aws_iam_policy" "iam-role-power-access" {
+  name = "IAMRolePowerAccess"
+
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "iam:CreateRole",
+        "iam:DeleteRole",
+        "iam:TagRole",
+        "iam:UntagRole",
+        "iam:UpdateRole"
+      ],
+      "Resource": "*"
+    }
+  ]
+}
+EOF
+}
+
 resource "aws_iam_policy" "serverlessrepo-full-access" {
   name = "ServerLessRepoFullAccess"
   path = "/"
@@ -184,4 +235,14 @@ resource "aws_iam_role_policy_attachment" "alexa-developer-lambda-full-access-at
 resource "aws_iam_role_policy_attachment" "alexa-developer-serverlessrepo-full-access-attach" {
   role       = "${aws_iam_role.alexa-developer.name}"
   policy_arn = "${aws_iam_policy.serverlessrepo-full-access.arn}"
+}
+
+resource "aws_iam_role_policy_attachment" "alexa-developer-cloudformation-full-access-attach" {
+  role       = "${aws_iam_role.alexa-developer.name}"
+  policy_arn = "${aws_iam_policy.cloudformation-full-access.arn}"
+}
+
+resource "aws_iam_role_policy_attachment" "alexa-developer-iam-role-power-access-attach" {
+  role       = "${aws_iam_role.alexa-developer.name}"
+  policy_arn = "${aws_iam_policy.iam-role-power-access.arn}"
 }
