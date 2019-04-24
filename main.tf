@@ -149,6 +149,26 @@ data "aws_iam_policy" "lambda-full-access" {
   arn = "arn:aws:iam::aws:policy/AWSLambdaFullAccess"
 }
 
+resource "aws_iam_policy" "serverlessrepo-readonly-access" {
+  name =  "ServerLessRepoReadOnlyAccess"
+  path = "/"
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": [
+        "serverlessrepo:SearchApplications"
+      ],
+      "Effect": "Allow",
+      "Resource": "*"
+    }
+  ]
+}
+EOF
+}
+
+
 resource "aws_iam_role_policy_attachment" "alexa-developer-alexa-full-access-attach" {
   role       = "${aws_iam_role.alexa-developer.name}"
   policy_arn = "${data.aws_iam_policy.alexa-full-access.arn}"
@@ -162,4 +182,9 @@ resource "aws_iam_role_policy_attachment" "alexa-developer-lex-full-access-attac
 resource "aws_iam_role_policy_attachment" "alexa-developer-lambda-full-access-attach" {
   role       = "${aws_iam_role.alexa-developer.name}"
   policy_arn = "${data.aws_iam_policy.lambda-full-access.arn}"
+}
+
+resource "aws_iam_role_policy_attachment" "alexa-developer-serverlessrepo-readonly-access-attach" {
+  role       = "${aws_iam_role.alexa-developer.name}"
+  policy_arn = "${aws_iam_policy.serverlessrepo-readonly-access.arn}"
 }
