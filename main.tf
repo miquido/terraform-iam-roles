@@ -4,7 +4,6 @@ locals {
   tags = "${merge(var.tags, map("Provisioned-By", "Miquido-IAM-Roles"))}"
 }
 
-
 resource "aws_iam_role" "administrator-access" {
   name = "AdministratorAccess"
   tags = "${local.tags}"
@@ -149,17 +148,16 @@ data "aws_iam_policy" "lambda-full-access" {
   arn = "arn:aws:iam::aws:policy/AWSLambdaFullAccess"
 }
 
-resource "aws_iam_policy" "serverlessrepo-readonly-access" {
-  name =  "ServerLessRepoReadOnlyAccess"
+resource "aws_iam_policy" "serverlessrepo-full-access" {
+  name = "ServerLessRepoFullAccess"
   path = "/"
+
   policy = <<EOF
 {
   "Version": "2012-10-17",
   "Statement": [
     {
-      "Action": [
-        "serverlessrepo:SearchApplications"
-      ],
+      "Action": "serverlessrepo:*",
       "Effect": "Allow",
       "Resource": "*"
     }
@@ -167,7 +165,6 @@ resource "aws_iam_policy" "serverlessrepo-readonly-access" {
 }
 EOF
 }
-
 
 resource "aws_iam_role_policy_attachment" "alexa-developer-alexa-full-access-attach" {
   role       = "${aws_iam_role.alexa-developer.name}"
@@ -184,7 +181,7 @@ resource "aws_iam_role_policy_attachment" "alexa-developer-lambda-full-access-at
   policy_arn = "${data.aws_iam_policy.lambda-full-access.arn}"
 }
 
-resource "aws_iam_role_policy_attachment" "alexa-developer-serverlessrepo-readonly-access-attach" {
+resource "aws_iam_role_policy_attachment" "alexa-developer-serverlessrepo-full-access-attach" {
   role       = "${aws_iam_role.alexa-developer.name}"
-  policy_arn = "${aws_iam_policy.serverlessrepo-readonly-access.arn}"
+  policy_arn = "${aws_iam_policy.serverlessrepo-full-access.arn}"
 }
