@@ -1,11 +1,18 @@
 # Administrator access
 
 locals {
-  tags = "${merge(var.tags, map("Provisioned-By", "Miquido-IAM-Roles"))}"
+  tags                      = "${merge(var.tags, map("Provisioned-By", "Miquido-IAM-Roles"))}"
+  role_administrator_access = "${var.roles_prefix}AdministratorAccess"
+  role_read_only_access     = "${var.roles_prefix}ReadOnlyAccess"
+  role_alexa_developer      = "${var.roles_prefix}AlexaDeveloper"
+  policy_deny_ct_write = "${var.policies_prefix}DenyCloudTrailWrite"
+  policy_cloud_formation_full_access = "${var.policies_prefix}CloudFormationFullAccess"
+  policy_iam_power_access = "${var.policies_prefix}IAMRolePowerAccess"
+  policy_serveless_repo_full_access = "${var.policies_prefix}ServerLessRepoFullAccess"
 }
 
 resource "aws_iam_role" "administrator-access" {
-  name = "AdministratorAccess"
+  name = "${local.role_administrator_access}"
   tags = "${local.tags}"
 
   assume_role_policy = <<EOF
@@ -40,7 +47,7 @@ resource "aws_iam_role_policy_attachment" "administrator-access-attach" {
 }
 
 resource "aws_iam_policy" "deny-ct-write" {
-  name = "DenyCloudTrailWrite"
+  name = "${local.policy_deny_ct_write}"
 
   policy = <<EOF
 {
@@ -74,7 +81,7 @@ resource "aws_iam_role_policy_attachment" "deny-ct-write-attach" {
 # Read only access
 
 resource "aws_iam_role" "readonly-access" {
-  name = "ReadOnlyAccess"
+  name = "${local.role_read_only_access}"
   tags = "${local.tags}"
 
   assume_role_policy = <<EOF
@@ -111,7 +118,7 @@ resource "aws_iam_role_policy_attachment" "readonly-access-attach" {
 # Alexa developer
 
 resource "aws_iam_role" "alexa-developer" {
-  name = "AlexaDeveloper"
+  name = "${local.role_alexa_developer}"
   tags = "${local.tags}"
 
   assume_role_policy = <<EOF
@@ -149,7 +156,7 @@ data "aws_iam_policy" "lambda-full-access" {
 }
 
 resource "aws_iam_policy" "cloudformation-full-access" {
-  name = "CloudFormationFullAccess"
+  name = "${local.policy_cloud_formation_full_access}"
 
   policy = <<EOF
 {
@@ -177,7 +184,7 @@ EOF
 }
 
 resource "aws_iam_policy" "iam-role-power-access" {
-  name = "IAMRolePowerAccess"
+  name = "${local.policy_iam_power_access}"
 
   policy = <<EOF
 {
@@ -200,7 +207,7 @@ EOF
 }
 
 resource "aws_iam_policy" "serverlessrepo-full-access" {
-  name = "ServerLessRepoFullAccess"
+  name = "${local.policy_serveless_repo_full_access}"
   path = "/"
 
   policy = <<EOF

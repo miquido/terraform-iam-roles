@@ -2,9 +2,9 @@ output "role_names" {
   description = "All created roles by module"
 
   value = [
-    "${aws_iam_role.administrator-access.id}",
-    "${aws_iam_role.readonly-access.id}",
-    "${aws_iam_role.alexa-developer.id}",
+    "${local.role_administrator_access}",
+    "${local.role_read_only_access}",
+    "${local.role_alexa_developer}",
   ]
 }
 

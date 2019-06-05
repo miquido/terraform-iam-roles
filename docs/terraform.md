@@ -2,8 +2,10 @@
 
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-----:|:-----:|
-| authentication_account_no | (Required) Number of AWS Organization Account used to manage IAM users | string | - | yes |
-| tags | (Optional) Additional tags to apply on all created resources | map | `<map>` | no |
+| authentication_account_no | Number of AWS Organization Account used to manage IAM users | string | - | yes |
+| policies_prefix | Prefix added to created roles | string | `` | no |
+| roles_prefix | Prefix added to created roles | string | `` | no |
+| tags | Additional tags to apply on all created resources | map | `<map>` | no |
 
 ## Outputs
 

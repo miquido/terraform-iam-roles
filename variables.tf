@@ -1,10 +1,22 @@
 variable "authentication_account_no" {
   type        = "string"
-  description = "(Required) Number of AWS Organization Account used to manage IAM users"
+  description = "Number of AWS Organization Account used to manage IAM users"
 }
 
 variable "tags" {
   type        = "map"
   default     = {}
-  description = "(Optional) Additional tags to apply on all created resources"
+  description = "Additional tags to apply on all created resources"
+}
+
+variable "roles_prefix" {
+  type        = "string"
+  default     = ""
+  description = "Prefix added to created roles"
+}
+
+variable "policies_prefix" {
+  type        = "string"
+  default     = ""
+  description = "Prefix added to created roles"
 }
