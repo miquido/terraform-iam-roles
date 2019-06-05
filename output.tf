@@ -1,11 +1,11 @@
 output "role_names" {
   description = "All created roles by module"
 
-  value = [
-    "${local.role_admin}",
-    "${local.role_readonly}",
-    "${local.role_alexa}",
-  ]
+  value = "${compact(list(
+    local.role_admin_enabled == "true" ? local.role_admin : "",
+    local.role_readonly_enabled == "true" ? local.role_readonly : "",
+    local.role_alexa_enabled == "true" ? local.role_alexa : "",
+  ))}"
 }
 
 output "role_readonly_access_arn" {

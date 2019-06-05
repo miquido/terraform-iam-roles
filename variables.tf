@@ -22,7 +22,7 @@ variable "policies_prefix" {
 }
 
 variable "role_set" {
-  type = "string"
-  default = "all"
+  type        = "string"
+  default     = "all"
   description = "Specify which role set is enabled. Check role_enabled map for informations which roles are enabled in specific set."
 }

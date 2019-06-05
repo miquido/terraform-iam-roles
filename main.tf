@@ -148,7 +148,7 @@ resource "aws_iam_role_policy_attachment" "readonly-access-attach" {
 # Alexa developer
 
 resource "aws_iam_role" "alexa-developer" {
-  count = "${local.role_alexa == "true" ? 1 : 0}"
+  count = "${local.role_alexa_enabled == "true" ? 1 : 0}"
   name  = "${local.role_alexa}"
   tags  = "${local.tags}"
 
@@ -187,7 +187,7 @@ data "aws_iam_policy" "lambda-full-access" {
 }
 
 resource "aws_iam_policy" "cloudformation-full-access" {
-  count = "${local.role_alexa == "true" ? 1 : 0}"
+  count = "${local.role_alexa_enabled == "true" ? 1 : 0}"
   name  = "${local.policy_cloud_formation_full_access}"
 
   policy = <<EOF
@@ -216,7 +216,7 @@ EOF
 }
 
 resource "aws_iam_policy" "iam-role-power-access" {
-  count = "${local.role_alexa == "true" ? 1 : 0}"
+  count = "${local.role_alexa_enabled == "true" ? 1 : 0}"
   name  = "${local.policy_iam_power_access}"
 
   policy = <<EOF
@@ -240,7 +240,7 @@ EOF
 }
 
 resource "aws_iam_policy" "serverlessrepo-full-access" {
-  count = "${local.role_alexa == "true" ? 1 : 0}"
+  count = "${local.role_alexa_enabled == "true" ? 1 : 0}"
   name  = "${local.policy_serveless_repo_full_access}"
   path  = "/"
 
@@ -259,37 +259,37 @@ EOF
 }
 
 resource "aws_iam_role_policy_attachment" "alexa-developer-alexa-full-access-attach" {
-  count      = "${local.role_alexa == "true" ? 1 : 0}"
+  count      = "${local.role_alexa_enabled == "true" ? 1 : 0}"
   role       = "${aws_iam_role.alexa-developer.name}"
   policy_arn = "${data.aws_iam_policy.alexa-full-access.arn}"
 }
 
 resource "aws_iam_role_policy_attachment" "alexa-developer-lex-full-access-attach" {
-  count      = "${local.role_alexa == "true" ? 1 : 0}"
+  count      = "${local.role_alexa_enabled == "true" ? 1 : 0}"
   role       = "${aws_iam_role.alexa-developer.name}"
   policy_arn = "${data.aws_iam_policy.lex-full-access.arn}"
 }
 
 resource "aws_iam_role_policy_attachment" "alexa-developer-lambda-full-access-attach" {
-  count      = "${local.role_alexa == "true" ? 1 : 0}"
+  count      = "${local.role_alexa_enabled == "true" ? 1 : 0}"
   role       = "${aws_iam_role.alexa-developer.name}"
   policy_arn = "${data.aws_iam_policy.lambda-full-access.arn}"
 }
 
 resource "aws_iam_role_policy_attachment" "alexa-developer-serverlessrepo-full-access-attach" {
-  count      = "${local.role_alexa == "true" ? 1 : 0}"
+  count      = "${local.role_alexa_enabled == "true" ? 1 : 0}"
   role       = "${aws_iam_role.alexa-developer.name}"
   policy_arn = "${aws_iam_policy.serverlessrepo-full-access.arn}"
 }
 
 resource "aws_iam_role_policy_attachment" "alexa-developer-cloudformation-full-access-attach" {
-  count      = "${local.role_alexa == "true" ? 1 : 0}"
+  count      = "${local.role_alexa_enabled == "true" ? 1 : 0}"
   role       = "${aws_iam_role.alexa-developer.name}"
   policy_arn = "${aws_iam_policy.cloudformation-full-access.arn}"
 }
 
 resource "aws_iam_role_policy_attachment" "alexa-developer-iam-role-power-access-attach" {
-  count      = "${local.role_alexa == "true" ? 1 : 0}"
+  count      = "${local.role_alexa_enabled == "true" ? 1 : 0}"
   role       = "${aws_iam_role.alexa-developer.name}"
   policy_arn = "${aws_iam_policy.iam-role-power-access.arn}"
 }
