@@ -23,8 +23,49 @@ BitBucket Repository: https://bitbucket.org/miquido/terraform-iam-roles
 
 ```hcl
 module "iam-roles" {
-  source = "git::ssh://git@bitbucket.org/miquido/terraform-iam-roles.git?ref=1.0.0"
+  source = "git::ssh://git@bitbucket.org/miquido/terraform-iam-roles.git?ref=1.5.1"
   authentication_account_no = "xxxxx"
+}
+```
+
+### Enable only specific roles
+
+Not always all roles are desirable. To enable only one set of roles, use module like bellow.
+
+```hcl
+module "iam-roles" {
+  source = "git::ssh://git@bitbucket.org/miquido/terraform-iam-roles.git?ref=1.5.1"
+  authentication_account_no = "xxxxx"
+  roles_set = "readonly" # available options: all, standard, readonly, alexa
+                         # see main.tf#locals.role_enabled map for more informations
+}
+```
+
+### Multiple accounts
+
+To use multiple iam roles modules inside one account you can use `roles_prefix` and `policies_prefix` to avoid resources' names collisions.
+
+```hcl
+module "iam-roles-account-one" {
+  source = "git::ssh://git@bitbucket.org/miquido/terraform-iam-roles.git?ref=1.5.1"
+  authentication_account_no = "xxxxxone"
+  roles_set = "readonly"
+  policies_prefix = "AccountOne"
+  roles_prefix = "AccountOne"
+  tags = {
+    "Heritage" = "Account One"
+  }
+}
+
+module "iam-roles-account-two" {
+  source = "git::ssh://git@bitbucket.org/miquido/terraform-iam-roles.git?ref=1.5.1"
+  authentication_account_no = "xxxxxtwo"
+  roles_set = "standard"
+  policies_prefix = "AccountTwo"
+  roles_prefix = "AccountTwo"
+  tags = {
+    "Heritage" = "Account Two"
+  }
 }
 ```
 ## Makefile Targets
