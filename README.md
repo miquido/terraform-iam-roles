@@ -43,6 +43,7 @@ Available targets:
 |------|-------------|:----:|:-----:|:-----:|
 | authentication_account_no | Number of AWS Organization Account used to manage IAM users | string | - | yes |
 | policies_prefix | Prefix added to created roles | string | `` | no |
+| role_set | Specify which role set is enabled. Check role_enabled map for informations which roles are enabled in specific set. | string | `all` | no |
 | roles_prefix | Prefix added to created roles | string | `` | no |
 | tags | Additional tags to apply on all created resources | map | `<map>` | no |
 
