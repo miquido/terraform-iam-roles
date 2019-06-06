@@ -36,31 +36,31 @@ locals {
   role_alexa_enabled = "${lookup(local.role_enabled[var.role_set], "alexa", "false")}"
 }
 
-resource "aws_iam_role" "administrator-access" {
-  count = "${local.role_admin_enabled == "true" ? 1 : 0}"
-  name  = "${local.role_admin}"
-  tags  = "${local.tags}"
+data "aws_iam_policy_document" "assume_role_policy" {
+  statement {
+    sid     = ""
+    effect  = "Allow"
+    action  = "sts:AssumeRole"
+    version = "2012-10-17"
 
-  assume_role_policy = <<EOF
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Sid": "",
-      "Effect": "Allow",
-      "Principal": {
-        "AWS": "${local.principals_json}"
-      },
-      "Action": "sts:AssumeRole",
-      "Condition": {
-        "Bool": {
-          "aws:MultiFactorAuthPresent": "true"
-        }
-      }
+    principals = {
+      type        = "AWS"
+      identifiers = "${var.principals}"
     }
-  ]
+
+    condition = {
+      test     = "Bool"
+      variable = "aws:MultiFactorAuthPresent"
+      values   = ["true"]
+    }
+  }
 }
-EOF
+
+resource "aws_iam_role" "administrator-access" {
+  count              = "${local.role_admin_enabled == "true" ? 1 : 0}"
+  name               = "${local.role_admin}"
+  tags               = "${local.tags}"
+  assume_role_policy = "${data.aws_iam_policy_document.assume_role_policy.json}"
 }
 
 data "aws_iam_policy" "administrator-access" {
@@ -110,30 +110,10 @@ resource "aws_iam_role_policy_attachment" "deny-ct-write-attach" {
 # Read only access
 
 resource "aws_iam_role" "readonly-access" {
-  count = "${local.role_readonly_enabled == "true" ? 1 : 0}"
-  name  = "${local.role_readonly}"
-  tags  = "${local.tags}"
-
-  assume_role_policy = <<EOF
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Sid": "",
-      "Effect": "Allow",
-      "Principal": {
-        "AWS": "${local.principals_json}"
-      },
-      "Action": "sts:AssumeRole",
-      "Condition": {
-        "Bool": {
-          "aws:MultiFactorAuthPresent": "true"
-        }
-      }
-    }
-  ]
-}
-EOF
+  count              = "${local.role_readonly_enabled == "true" ? 1 : 0}"
+  name               = "${local.role_readonly}"
+  tags               = "${local.tags}"
+  assume_role_policy = "${data.aws_iam_policy_document.assume_role_policy.json}"
 }
 
 data "aws_iam_policy" "readonly-access" {
@@ -149,30 +129,10 @@ resource "aws_iam_role_policy_attachment" "readonly-access-attach" {
 # Alexa developer
 
 resource "aws_iam_role" "alexa-developer" {
-  count = "${local.role_alexa_enabled == "true" ? 1 : 0}"
-  name  = "${local.role_alexa}"
-  tags  = "${local.tags}"
-
-  assume_role_policy = <<EOF
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Sid": "",
-      "Effect": "Allow",
-      "Principal": {
-        "AWS": "${local.principals_json}"
-      },
-      "Action": "sts:AssumeRole",
-      "Condition": {
-        "Bool": {
-          "aws:MultiFactorAuthPresent": "true"
-        }
-      }
-    }
-  ]
-}
-EOF
+  count              = "${local.role_alexa_enabled == "true" ? 1 : 0}"
+  name               = "${local.role_alexa}"
+  tags               = "${local.tags}"
+  assume_role_policy = "${data.aws_iam_policy_document.assume_role_policy.json}"
 }
 
 data "aws_iam_policy" "lex-full-access" {
