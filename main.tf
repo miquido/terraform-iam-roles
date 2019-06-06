@@ -39,9 +39,9 @@ data "aws_iam_policy_document" "assume_role_policy" {
   version = "2012-10-17"
 
   statement {
-    sid    = ""
-    effect = "Allow"
-    action = "sts:AssumeRole"
+    sid     = ""
+    effect  = "Allow"
+    actions = ["sts:AssumeRole"]
 
     principals = {
       type        = "AWS"
