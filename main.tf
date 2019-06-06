@@ -9,7 +9,6 @@ locals {
   policy_cloud_formation_full_access = "${var.policies_prefix}CloudFormationFullAccess"
   policy_iam_power_access            = "${var.policies_prefix}IAMRolePowerAccess"
   policy_serveless_repo_full_access  = "${var.policies_prefix}ServerLessRepoFullAccess"
-  principals_json                    = "${jsonencode(var.principals)}"
 
   role_enabled = {
     all = {
@@ -37,11 +36,12 @@ locals {
 }
 
 data "aws_iam_policy_document" "assume_role_policy" {
+  version = "2012-10-17"
+
   statement {
-    sid     = ""
-    effect  = "Allow"
-    action  = "sts:AssumeRole"
-    version = "2012-10-17"
+    sid    = ""
+    effect = "Allow"
+    action = "sts:AssumeRole"
 
     principals = {
       type        = "AWS"
