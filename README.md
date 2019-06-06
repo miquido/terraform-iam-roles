@@ -24,7 +24,7 @@ BitBucket Repository: https://bitbucket.org/miquido/terraform-iam-roles
 ```hcl
 module "iam-roles" {
   source = "git::ssh://git@bitbucket.org/miquido/terraform-iam-roles.git?ref=1.5.1"
-  authentication_account_no = "xxxxx"
+  prinicpals = ["xxxxx"]
 }
 ```
 
@@ -35,7 +35,7 @@ Not always all roles are desirable. To enable only one set of roles, use module 
 ```hcl
 module "iam-roles" {
   source = "git::ssh://git@bitbucket.org/miquido/terraform-iam-roles.git?ref=1.5.1"
-  authentication_account_no = "xxxxx"
+  prinicpals = ["xxxxx"]
   roles_set = "readonly" # available options: all, standard, readonly, alexa
                          # see main.tf#locals.role_enabled map for more informations
 }
@@ -43,12 +43,19 @@ module "iam-roles" {
 
 ### Multiple accounts
 
-To use multiple iam roles modules inside one account you can use `roles_prefix` and `policies_prefix` to avoid resources' names collisions.
+#### To allow assuming roles from different AWS accounts you can provide serveal prinicipals
+
+module "iam-roles" {
+  source = "git::ssh://git@bitbucket.org/miquido/terraform-iam-roles.git?ref=1.5.1"
+  prinicpals = ["arn:aws:iam::xxxxone:root", "arn:aws:iam::xxxxtwo:root"]
+}
+
+#### To use multiple IAM roles modules inside one AWS account for different reasons, you can use unique `roles_prefix` and `policies_prefix` to avoid IAM resources' names collisions.
 
 ```hcl
 module "iam-roles-account-one" {
   source = "git::ssh://git@bitbucket.org/miquido/terraform-iam-roles.git?ref=1.5.1"
-  authentication_account_no = "xxxxxone"
+  prinicpals = ["xxxxxone"]
   roles_set = "readonly"
   policies_prefix = "AccountOne"
   roles_prefix = "AccountOne"
@@ -59,7 +66,7 @@ module "iam-roles-account-one" {
 
 module "iam-roles-account-two" {
   source = "git::ssh://git@bitbucket.org/miquido/terraform-iam-roles.git?ref=1.5.1"
-  authentication_account_no = "xxxxxtwo"
+  prinicpals = ["xxxxxtwo"]
   roles_set = "standard"
   policies_prefix = "AccountTwo"
   roles_prefix = "AccountTwo"
@@ -82,8 +89,8 @@ Available targets:
 
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-----:|:-----:|
-| authentication_account_no | Number of AWS Organization Account used to manage IAM users | string | - | yes |
 | policies_prefix | Prefix added to created roles | string | `` | no |
+| principals | List of AWS Prinicpals to allow assuming created IAM roles (https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements_principal.html) | list | - | yes |
 | role_set | Specify which role set is enabled. Check role_enabled map for informations which roles are enabled in specific set. | string | `all` | no |
 | roles_prefix | Prefix added to created roles | string | `` | no |
 | tags | Additional tags to apply on all created resources | map | `<map>` | no |

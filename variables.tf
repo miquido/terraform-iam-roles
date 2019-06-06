@@ -1,6 +1,6 @@
-variable "authentication_account_no" {
-  type        = "string"
-  description = "Number of AWS Organization Account used to manage IAM users"
+variable "principals" {
+  type        = "list"
+  description = "List of AWS Prinicpals to allow assuming created IAM roles (https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements_principal.html)"
 }
 
 variable "tags" {

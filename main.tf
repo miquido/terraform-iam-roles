@@ -9,6 +9,7 @@ locals {
   policy_cloud_formation_full_access = "${var.policies_prefix}CloudFormationFullAccess"
   policy_iam_power_access            = "${var.policies_prefix}IAMRolePowerAccess"
   policy_serveless_repo_full_access  = "${var.policies_prefix}ServerLessRepoFullAccess"
+  principals_json                    = "${jsonencode(var.principals)}"
 
   role_enabled = {
     all = {
@@ -48,7 +49,7 @@ resource "aws_iam_role" "administrator-access" {
       "Sid": "",
       "Effect": "Allow",
       "Principal": {
-        "AWS": "arn:aws:iam::${var.authentication_account_no}:root"
+        "AWS": "${local.principals_json}"
       },
       "Action": "sts:AssumeRole",
       "Condition": {
@@ -121,7 +122,7 @@ resource "aws_iam_role" "readonly-access" {
       "Sid": "",
       "Effect": "Allow",
       "Principal": {
-        "AWS": "arn:aws:iam::${var.authentication_account_no}:root"
+        "AWS": "${local.principals_json}"
       },
       "Action": "sts:AssumeRole",
       "Condition": {
@@ -160,7 +161,7 @@ resource "aws_iam_role" "alexa-developer" {
       "Sid": "",
       "Effect": "Allow",
       "Principal": {
-        "AWS": "arn:aws:iam::${var.authentication_account_no}:root"
+        "AWS": "${local.principals_json}"
       },
       "Action": "sts:AssumeRole",
       "Condition": {
