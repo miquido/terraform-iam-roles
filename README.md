@@ -24,7 +24,7 @@ BitBucket Repository: https://bitbucket.org/miquido/terraform-iam-roles
 ```hcl
 module "iam-roles" {
   source = "git::ssh://git@bitbucket.org/miquido/terraform-iam-roles.git?ref=1.5.1"
-  prinicpals = ["xxxxx"]
+  principals = ["xxxxx"]
 }
 ```
 
@@ -35,7 +35,7 @@ Not always all roles are desirable. To enable only one set of roles, use module 
 ```hcl
 module "iam-roles" {
   source = "git::ssh://git@bitbucket.org/miquido/terraform-iam-roles.git?ref=1.5.1"
-  prinicpals = ["xxxxx"]
+  principals = ["xxxxx"]
   roles_set = "readonly" # available options: all, standard, readonly, alexa
                          # see main.tf#locals.role_enabled map for more informations
 }
@@ -47,7 +47,7 @@ module "iam-roles" {
 
 module "iam-roles" {
   source = "git::ssh://git@bitbucket.org/miquido/terraform-iam-roles.git?ref=1.5.1"
-  prinicpals = ["arn:aws:iam::xxxxone:root", "arn:aws:iam::xxxxtwo:root"]
+  principals = ["arn:aws:iam::xxxxone:root", "arn:aws:iam::xxxxtwo:root"]
 }
 
 #### To use multiple IAM roles modules inside one AWS account for different reasons, you can use unique `roles_prefix` and `policies_prefix` to avoid IAM resources' names collisions.
@@ -55,7 +55,7 @@ module "iam-roles" {
 ```hcl
 module "iam-roles-account-one" {
   source = "git::ssh://git@bitbucket.org/miquido/terraform-iam-roles.git?ref=1.5.1"
-  prinicpals = ["xxxxxone"]
+  principals = ["xxxxxone"]
   roles_set = "readonly"
   policies_prefix = "AccountOne"
   roles_prefix = "AccountOne"
@@ -66,7 +66,7 @@ module "iam-roles-account-one" {
 
 module "iam-roles-account-two" {
   source = "git::ssh://git@bitbucket.org/miquido/terraform-iam-roles.git?ref=1.5.1"
-  prinicpals = ["xxxxxtwo"]
+  principals = ["xxxxxtwo"]
   roles_set = "standard"
   policies_prefix = "AccountTwo"
   roles_prefix = "AccountTwo"
