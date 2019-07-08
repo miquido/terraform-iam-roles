@@ -90,10 +90,10 @@ Available targets:
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-----:|:-----:|
 | policies_prefix | Prefix added to created roles | string | `` | no |
-| principals | List of AWS Prinicpals to allow assuming created IAM roles (https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements_principal.html) | list | - | yes |
+| principals | List of AWS Prinicpals to allow assuming created IAM roles (https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements_principal.html) | list(string) | - | yes |
 | role_set | Specify which role set is enabled. Check role_enabled map for informations which roles are enabled in specific set. | string | `all` | no |
 | roles_prefix | Prefix added to created roles | string | `` | no |
-| tags | Additional tags to apply on all created resources | map | `<map>` | no |
+| tags | Additional tags to apply on all created resources | map(string) | `<map>` | no |
 
 ## Outputs
 
