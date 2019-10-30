@@ -10,6 +10,7 @@ locals {
   role_admin                         = "${var.roles_prefix}AdministratorAccess"
   role_readonly                      = "${var.roles_prefix}ReadOnlyAccess"
   role_alexa                         = "${var.roles_prefix}AlexaDeveloper"
+  role_superadmin                    = "${var.roles_prefix}SuperAdministratorAccess"
   policy_deny_ct_write               = "${var.policies_prefix}DenyCloudTrailWrite"
   policy_cloud_formation_full_access = "${var.policies_prefix}CloudFormationFullAccess"
   policy_iam_power_access            = "${var.policies_prefix}IAMRolePowerAccess"
@@ -17,24 +18,31 @@ locals {
 
   role_enabled = {
     all = {
-      alexa = "true"
+      alexa      = true
+      superadmin = true
     }
     standard = {}
     readonly = {
-      admin = "false"
-      read  = "true"
+      admin = false
+      read  = true
     }
     alexa = {
-      alexa = "true"
+      alexa = true
+    }
+    superadminonly = {
+      admin      = false
+      readonly   = false
+      superadmin = true
     }
   }
 
   # Standard - default enabled
-  role_admin_enabled    = lookup(local.role_enabled[var.role_set], "admin", "true")
-  role_readonly_enabled = lookup(local.role_enabled[var.role_set], "readonly", "true")
+  role_admin_enabled    = lookup(local.role_enabled[var.role_set], "admin", true)
+  role_readonly_enabled = lookup(local.role_enabled[var.role_set], "readonly", true)
 
   # Non standard - default disabled
-  role_alexa_enabled = lookup(local.role_enabled[var.role_set], "alexa", "false")
+  role_alexa_enabled      = lookup(local.role_enabled[var.role_set], "alexa", false)
+  role_superadmin_enabled = lookup(local.role_enabled[var.role_set], "superadmin", false)
 }
 
 data "aws_iam_policy_document" "assume_role_policy" {
@@ -58,8 +66,15 @@ data "aws_iam_policy_document" "assume_role_policy" {
   }
 }
 
+resource "aws_iam_role" "super-administrator-access" {
+  count              = local.role_superadmin_enabled ? 1 : 0
+  name               = local.role_superadmin
+  tags               = local.tags
+  assume_role_policy = data.aws_iam_policy_document.assume_role_policy.json
+}
+
 resource "aws_iam_role" "administrator-access" {
-  count              = local.role_admin_enabled == "true" ? 1 : 0
+  count              = local.role_admin_enabled ? 1 : 0
   name               = local.role_admin
   tags               = local.tags
   assume_role_policy = data.aws_iam_policy_document.assume_role_policy.json
@@ -70,13 +85,19 @@ data "aws_iam_policy" "administrator-access" {
 }
 
 resource "aws_iam_role_policy_attachment" "administrator-access-attach" {
-  count      = local.role_admin_enabled == "true" ? 1 : 0
+  count      = local.role_admin_enabled ? 1 : 0
   role       = aws_iam_role.administrator-access[0].name
   policy_arn = data.aws_iam_policy.administrator-access.arn
 }
 
+resource "aws_iam_role_policy_attachment" "super-administrator-access-attach" {
+  count      = local.role_superadmin_enabled ? 1 : 0
+  role       = aws_iam_role.super-administrator-access[0].name
+  policy_arn = data.aws_iam_policy.administrator-access.arn
+}
+
 resource "aws_iam_policy" "deny-ct-write" {
-  count = local.role_admin_enabled == "true" ? 1 : 0
+  count = local.role_admin_enabled ? 1 : 0
   name  = local.policy_deny_ct_write
 
   policy = <<EOF
@@ -105,17 +126,17 @@ EOF
 }
 
 resource "aws_iam_role_policy_attachment" "deny-ct-write-attach" {
-  count = local.role_admin_enabled == "true" ? 1 : 0
-  role = aws_iam_role.administrator-access[0].name
+  count      = local.role_admin_enabled ? 1 : 0
+  role       = aws_iam_role.administrator-access[0].name
   policy_arn = aws_iam_policy.deny-ct-write[0].arn
 }
 
 # Read only access
 
 resource "aws_iam_role" "readonly-access" {
-  count = local.role_readonly_enabled == "true" ? 1 : 0
-  name = local.role_readonly
-  tags = local.tags
+  count              = local.role_readonly_enabled ? 1 : 0
+  name               = local.role_readonly
+  tags               = local.tags
   assume_role_policy = data.aws_iam_policy_document.assume_role_policy.json
 }
 
@@ -124,17 +145,17 @@ data "aws_iam_policy" "readonly-access" {
 }
 
 resource "aws_iam_role_policy_attachment" "readonly-access-attach" {
-  count = local.role_readonly_enabled == "true" ? 1 : 0
-  role = aws_iam_role.readonly-access[0].name
+  count      = local.role_readonly_enabled ? 1 : 0
+  role       = aws_iam_role.readonly-access[0].name
   policy_arn = data.aws_iam_policy.readonly-access.arn
 }
 
 # Alexa developer
 
 resource "aws_iam_role" "alexa-developer" {
-  count = local.role_alexa_enabled == "true" ? 1 : 0
-  name = local.role_alexa
-  tags = local.tags
+  count              = local.role_alexa_enabled ? 1 : 0
+  name               = local.role_alexa
+  tags               = local.tags
   assume_role_policy = data.aws_iam_policy_document.assume_role_policy.json
 }
 
@@ -151,8 +172,8 @@ data "aws_iam_policy" "lambda-full-access" {
 }
 
 resource "aws_iam_policy" "cloudformation-full-access" {
-  count = local.role_alexa_enabled == "true" ? 1 : 0
-  name = local.policy_cloud_formation_full_access
+  count = local.role_alexa_enabled ? 1 : 0
+  name  = local.policy_cloud_formation_full_access
 
   policy = <<EOF
 {
@@ -181,10 +202,10 @@ EOF
 }
 
 resource "aws_iam_policy" "iam-role-power-access" {
-count = local.role_alexa_enabled == "true" ? 1 : 0
-name  = local.policy_iam_power_access
+  count = local.role_alexa_enabled ? 1 : 0
+  name  = local.policy_iam_power_access
 
-policy = <<EOF
+  policy = <<EOF
 {
   "Version": "2012-10-17",
   "Statement": [
@@ -206,11 +227,11 @@ EOF
 }
 
 resource "aws_iam_policy" "serverlessrepo-full-access" {
-count = local.role_alexa_enabled == "true" ? 1 : 0
-name = local.policy_serveless_repo_full_access
-path = "/"
+  count = local.role_alexa_enabled ? 1 : 0
+  name  = local.policy_serveless_repo_full_access
+  path  = "/"
 
-policy = <<EOF
+  policy = <<EOF
 {
   "Version": "2012-10-17",
   "Statement": [
@@ -226,37 +247,37 @@ EOF
 }
 
 resource "aws_iam_role_policy_attachment" "alexa-developer-alexa-full-access-attach" {
-  count      = local.role_alexa_enabled == "true" ? 1 : 0
+  count      = local.role_alexa_enabled ? 1 : 0
   role       = aws_iam_role.alexa-developer[0].name
   policy_arn = data.aws_iam_policy.alexa-full-access.arn
 }
 
 resource "aws_iam_role_policy_attachment" "alexa-developer-lex-full-access-attach" {
-  count      = local.role_alexa_enabled == "true" ? 1 : 0
+  count      = local.role_alexa_enabled ? 1 : 0
   role       = aws_iam_role.alexa-developer[0].name
   policy_arn = data.aws_iam_policy.lex-full-access.arn
 }
 
 resource "aws_iam_role_policy_attachment" "alexa-developer-lambda-full-access-attach" {
-  count      = local.role_alexa_enabled == "true" ? 1 : 0
+  count      = local.role_alexa_enabled ? 1 : 0
   role       = aws_iam_role.alexa-developer[0].name
   policy_arn = data.aws_iam_policy.lambda-full-access.arn
 }
 
 resource "aws_iam_role_policy_attachment" "alexa-developer-serverlessrepo-full-access-attach" {
-  count      = local.role_alexa_enabled == "true" ? 1 : 0
+  count      = local.role_alexa_enabled ? 1 : 0
   role       = aws_iam_role.alexa-developer[0].name
   policy_arn = aws_iam_policy.serverlessrepo-full-access[0].arn
 }
 
 resource "aws_iam_role_policy_attachment" "alexa-developer-cloudformation-full-access-attach" {
-  count      = local.role_alexa_enabled == "true" ? 1 : 0
+  count      = local.role_alexa_enabled ? 1 : 0
   role       = aws_iam_role.alexa-developer[0].name
   policy_arn = aws_iam_policy.cloudformation-full-access[0].arn
 }
 
 resource "aws_iam_role_policy_attachment" "alexa-developer-iam-role-power-access-attach" {
-  count      = local.role_alexa_enabled == "true" ? 1 : 0
+  count      = local.role_alexa_enabled ? 1 : 0
   role       = aws_iam_role.alexa-developer[0].name
   policy_arn = aws_iam_policy.iam-role-power-access[0].arn
 }

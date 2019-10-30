@@ -19,4 +19,6 @@
 | role_names | All created roles by module |
 | role_readonly_access_arn | ARN of Read Only Access IAM Role |
 | role_readonly_access_id | Name of Read Only Access IAM Role |
+| role_superadmin_access_arn | ARN of Administrator Access IAM Role (ability to manage CloudTrail) |
+| role_superadmin_access_id | Name of Administrator Access IAM Role (ability to manage CloudTrail) |
 
