@@ -10,6 +10,7 @@
 | role_alexa_enabled | Whether to enable AlexaDeveloper IAM Role | bool | `false` | no |
 | role_readonly_enabled | Whether to enable ReadOnlyAccess IAM Role | bool | `true` | no |
 | role_superadmin_enabled | Whether to enable SuperAdministratorAccess IAM Role (Administrator with ability to manage CloudTrail) | bool | `false` | no |
+| roles_max_session_duration | The maximum session duration (in seconds) that you want to set for the specified role. If you do not specify a value for this setting, the default maximum of one hour is applied. This setting can have a value from 1 hour to 12 hours. | number | `3600` | no |
 | roles_prefix | Prefix added to created roles | string | `` | no |
 | tags | Additional tags to apply on all created resources | map(string) | `<map>` | no |
 

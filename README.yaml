@@ -17,10 +17,14 @@ description: |-
 
       full access policy to: `Lambda`, `Lex` and `Alexa` to assume from authentication account
 
+  - `SuperAdministratorAccess`
+
+      same as `AdministratorAccess` with ability to manage CloudTrail resources
+
 usage: |-
   ```hcl
   module "iam-roles" {
-    source = "git::ssh://git@bitbucket.org/miquido/terraform-iam-roles.git?ref=1.5.1"
+    source = "git::ssh://git@bitbucket.org/miquido/terraform-iam-roles.git?ref=master"
     principals = ["xxxxx"]
   }
   ```
@@ -31,10 +35,11 @@ usage: |-
 
   ```hcl
   module "iam-roles" {
-    source = "git::ssh://git@bitbucket.org/miquido/terraform-iam-roles.git?ref=1.5.1"
-    principals = ["xxxxx"]
-    roles_set = "readonly" # available options: all, standard, readonly, alexa
-                           # see main.tf#locals.role_enabled map for more informations
+    source = "git::ssh://git@bitbucket.org/miquido/terraform-iam-roles.git?ref=master"
+
+    principals            = ["xxxxx"]
+    role_admin_enabled    = true
+    role_readonly_enabled = true
   }
   ```
 
@@ -43,7 +48,8 @@ usage: |-
   #### To allow assuming roles from different AWS accounts you can provide serveal prinicipals
 
   module "iam-roles" {
-    source = "git::ssh://git@bitbucket.org/miquido/terraform-iam-roles.git?ref=1.5.1"
+    source = "git::ssh://git@bitbucket.org/miquido/terraform-iam-roles.git?ref=master"
+
     principals = ["arn:aws:iam::xxxxone:root", "arn:aws:iam::xxxxtwo:root"]
   }
 
@@ -51,22 +57,28 @@ usage: |-
 
   ```hcl
   module "iam-roles-account-one" {
-    source = "git::ssh://git@bitbucket.org/miquido/terraform-iam-roles.git?ref=1.5.1"
-    principals = ["xxxxxone"]
-    roles_set = "readonly"
-    policies_prefix = "AccountOne"
-    roles_prefix = "AccountOne"
+    source = "git::ssh://git@bitbucket.org/miquido/terraform-iam-roles.git?ref=master"
+
+    principals            = ["xxxxxone"]
+    policies_prefix       = "AccountOne"
+    roles_prefix          = "AccountOne"
+    role_admin_enabled    = false
+    role_readonly_enabled = true
+
     tags = {
       "Heritage" = "Account One"
     }
   }
 
   module "iam-roles-account-two" {
-    source = "git::ssh://git@bitbucket.org/miquido/terraform-iam-roles.git?ref=1.5.1"
-    principals = ["xxxxxtwo"]
-    roles_set = "standard"
-    policies_prefix = "AccountTwo"
-    roles_prefix = "AccountTwo"
+    source = "git::ssh://git@bitbucket.org/miquido/terraform-iam-roles.git?ref=master"
+
+    principals            = ["xxxxxtwo"]
+    policies_prefix       = "AccountTwo"
+    roles_prefix          = "AccountTwo"
+    role_admin_enabled    = true
+    role_readonly_enabled = true
+
     tags = {
       "Heritage" = "Account Two"
     }

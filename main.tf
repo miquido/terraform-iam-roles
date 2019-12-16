@@ -51,17 +51,19 @@ data "aws_iam_policy_document" "assume_role_policy" {
 }
 
 resource "aws_iam_role" "super-administrator-access" {
-  count              = var.role_superadmin_enabled ? 1 : 0
-  name               = local.role_superadmin
-  tags               = local.tags
-  assume_role_policy = data.aws_iam_policy_document.assume_role_policy.json
+  count                = var.role_superadmin_enabled ? 1 : 0
+  name                 = local.role_superadmin
+  tags                 = local.tags
+  assume_role_policy   = data.aws_iam_policy_document.assume_role_policy.json
+  max_session_duration = var.roles_max_session_duration
 }
 
 resource "aws_iam_role" "administrator-access" {
-  count              = var.role_admin_enabled ? 1 : 0
-  name               = local.role_admin
-  tags               = local.tags
-  assume_role_policy = data.aws_iam_policy_document.assume_role_policy.json
+  count                = var.role_admin_enabled ? 1 : 0
+  name                 = local.role_admin
+  tags                 = local.tags
+  assume_role_policy   = data.aws_iam_policy_document.assume_role_policy.json
+  max_session_duration = var.roles_max_session_duration
 }
 
 data "aws_iam_policy" "administrator-access" {
@@ -112,10 +114,11 @@ resource "aws_iam_role_policy_attachment" "deny-ct-write-attach" {
 # Read only access
 
 resource "aws_iam_role" "readonly-access" {
-  count              = var.role_readonly_enabled ? 1 : 0
-  name               = local.role_readonly
-  tags               = local.tags
-  assume_role_policy = data.aws_iam_policy_document.assume_role_policy.json
+  count                = var.role_readonly_enabled ? 1 : 0
+  name                 = local.role_readonly
+  tags                 = local.tags
+  assume_role_policy   = data.aws_iam_policy_document.assume_role_policy.json
+  max_session_duration = var.roles_max_session_duration
 }
 
 data "aws_iam_policy" "readonly-access" {
@@ -131,10 +134,11 @@ resource "aws_iam_role_policy_attachment" "readonly-access-attach" {
 # Alexa developer
 
 resource "aws_iam_role" "alexa-developer" {
-  count              = var.role_alexa_enabled ? 1 : 0
-  name               = local.role_alexa
-  tags               = local.tags
-  assume_role_policy = data.aws_iam_policy_document.assume_role_policy.json
+  count                = var.role_alexa_enabled ? 1 : 0
+  name                 = local.role_alexa
+  tags                 = local.tags
+  assume_role_policy   = data.aws_iam_policy_document.assume_role_policy.json
+  max_session_duration = var.roles_max_session_duration
 }
 
 data "aws_iam_policy" "lex-full-access" {

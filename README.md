@@ -15,6 +15,10 @@ Roles provisioned by module:
 - `AlexaDeveloper`
 
     full access policy to: `Lambda`, `Lex` and `Alexa` to assume from authentication account
+
+- `SuperAdministratorAccess`
+
+    same as `AdministratorAccess` with ability to manage CloudTrail resources
 ---
 Terraform Module
 
@@ -23,7 +27,7 @@ BitBucket Repository: https://bitbucket.org/miquido/terraform-iam-roles
 
 ```hcl
 module "iam-roles" {
-  source = "git::ssh://git@bitbucket.org/miquido/terraform-iam-roles.git?ref=1.5.1"
+  source = "git::ssh://git@bitbucket.org/miquido/terraform-iam-roles.git?ref=master"
   principals = ["xxxxx"]
 }
 ```
@@ -34,10 +38,11 @@ Not always all roles are desirable. To enable only one set of roles, use module 
 
 ```hcl
 module "iam-roles" {
-  source = "git::ssh://git@bitbucket.org/miquido/terraform-iam-roles.git?ref=1.5.1"
-  principals = ["xxxxx"]
-  roles_set = "readonly" # available options: all, standard, readonly, alexa
-                         # see main.tf#locals.role_enabled map for more informations
+  source = "git::ssh://git@bitbucket.org/miquido/terraform-iam-roles.git?ref=master"
+
+  principals            = ["xxxxx"]
+  role_admin_enabled    = true
+  role_readonly_enabled = true
 }
 ```
 
@@ -46,7 +51,8 @@ module "iam-roles" {
 #### To allow assuming roles from different AWS accounts you can provide serveal prinicipals
 
 module "iam-roles" {
-  source = "git::ssh://git@bitbucket.org/miquido/terraform-iam-roles.git?ref=1.5.1"
+  source = "git::ssh://git@bitbucket.org/miquido/terraform-iam-roles.git?ref=master"
+
   principals = ["arn:aws:iam::xxxxone:root", "arn:aws:iam::xxxxtwo:root"]
 }
 
@@ -54,22 +60,28 @@ module "iam-roles" {
 
 ```hcl
 module "iam-roles-account-one" {
-  source = "git::ssh://git@bitbucket.org/miquido/terraform-iam-roles.git?ref=1.5.1"
-  principals = ["xxxxxone"]
-  roles_set = "readonly"
-  policies_prefix = "AccountOne"
-  roles_prefix = "AccountOne"
+  source = "git::ssh://git@bitbucket.org/miquido/terraform-iam-roles.git?ref=master"
+
+  principals            = ["xxxxxone"]
+  policies_prefix       = "AccountOne"
+  roles_prefix          = "AccountOne"
+  role_admin_enabled    = false
+  role_readonly_enabled = true
+
   tags = {
     "Heritage" = "Account One"
   }
 }
 
 module "iam-roles-account-two" {
-  source = "git::ssh://git@bitbucket.org/miquido/terraform-iam-roles.git?ref=1.5.1"
-  principals = ["xxxxxtwo"]
-  roles_set = "standard"
-  policies_prefix = "AccountTwo"
-  roles_prefix = "AccountTwo"
+  source = "git::ssh://git@bitbucket.org/miquido/terraform-iam-roles.git?ref=master"
+
+  principals            = ["xxxxxtwo"]
+  policies_prefix       = "AccountTwo"
+  roles_prefix          = "AccountTwo"
+  role_admin_enabled    = true
+  role_readonly_enabled = true
+
   tags = {
     "Heritage" = "Account Two"
   }
@@ -97,6 +109,7 @@ Available targets:
 | role_alexa_enabled | Whether to enable AlexaDeveloper IAM Role | bool | `false` | no |
 | role_readonly_enabled | Whether to enable ReadOnlyAccess IAM Role | bool | `true` | no |
 | role_superadmin_enabled | Whether to enable SuperAdministratorAccess IAM Role (Administrator with ability to manage CloudTrail) | bool | `false` | no |
+| roles_max_session_duration | The maximum session duration (in seconds) that you want to set for the specified role. If you do not specify a value for this setting, the default maximum of one hour is applied. This setting can have a value from 1 hour to 12 hours. | number | `3600` | no |
 | roles_prefix | Prefix added to created roles | string | `` | no |
 | tags | Additional tags to apply on all created resources | map(string) | `<map>` | no |
 
