@@ -21,9 +21,38 @@ variable "policies_prefix" {
   description = "Prefix added to created roles"
 }
 
-variable "role_set" {
-  type        = string
-  default     = "all"
-  description = "Specify which role set is enabled. Check role_enabled map for informations which roles are enabled in specific set."
+variable "assume_role_mfa_enabled" {
+  type        = bool
+  default     = true
+  description = "Whether to require MFA to assume enabled roles. See: https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-role.html#cli-configure-role-mfa"
 }
 
+variable "assume_role_external_id" {
+  type        = string
+  default     = ""
+  description = "Specify external ID required to assume enabled roles. Disabled if empty. See: https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-role.html#cli-configure-role-xaccount"
+}
+
+variable "role_admin_enabled" {
+  type        = bool
+  default     = true
+  description = "Whether to enable AdministratorAccess IAM Role"
+}
+
+variable "role_superadmin_enabled" {
+  type        = bool
+  default     = false
+  description = "Whether to enable SuperAdministratorAccess IAM Role (Administrator with ability to manage CloudTrail)"
+}
+
+variable "role_readonly_enabled" {
+  type        = bool
+  default     = true
+  description = "Whether to enable ReadOnlyAccess IAM Role"
+}
+
+variable "role_alexa_enabled" {
+  type        = bool
+  default     = false
+  description = "Whether to enable AlexaDeveloper IAM Role"
+}

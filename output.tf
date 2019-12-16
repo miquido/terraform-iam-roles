@@ -3,10 +3,10 @@ output "role_names" {
 
   value = compact(
     [
-      local.role_superadmin_enabled ? local.role_superadmin : "",
-      local.role_admin_enabled ? local.role_admin : "",
-      local.role_readonly_enabled ? local.role_readonly : "",
-      local.role_alexa_enabled ? local.role_alexa : "",
+      var.role_superadmin_enabled ? local.role_superadmin : "",
+      var.role_admin_enabled ? local.role_admin : "",
+      var.role_readonly_enabled ? local.role_readonly : "",
+      var.role_alexa_enabled ? local.role_alexa : "",
     ],
   )
 }

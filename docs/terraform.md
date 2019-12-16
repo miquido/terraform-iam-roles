@@ -2,9 +2,14 @@
 
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-----:|:-----:|
+| assume_role_external_id | Specify external ID required to assume enabled roles. Disabled if empty. See: https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-role.html#cli-configure-role-xaccount | string | `` | no |
+| assume_role_mfa_enabled | Whether to require MFA to assume enabled roles. See: https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-role.html#cli-configure-role-mfa | bool | `true` | no |
 | policies_prefix | Prefix added to created roles | string | `` | no |
 | principals | List of AWS Prinicpals to allow assuming created IAM roles (https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements_principal.html) | list(string) | - | yes |
-| role_set | Specify which role set is enabled. Check role_enabled map for informations which roles are enabled in specific set. | string | `all` | no |
+| role_admin_enabled | Whether to enable AdministratorAccess IAM Role | bool | `true` | no |
+| role_alexa_enabled | Whether to enable AlexaDeveloper IAM Role | bool | `false` | no |
+| role_readonly_enabled | Whether to enable ReadOnlyAccess IAM Role | bool | `true` | no |
+| role_superadmin_enabled | Whether to enable SuperAdministratorAccess IAM Role (Administrator with ability to manage CloudTrail) | bool | `false` | no |
 | roles_prefix | Prefix added to created roles | string | `` | no |
 | tags | Additional tags to apply on all created resources | map(string) | `<map>` | no |
 
