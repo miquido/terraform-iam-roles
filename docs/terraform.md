@@ -8,6 +8,7 @@
 | principals | List of AWS Prinicpals to allow assuming created IAM roles (https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements_principal.html) | list(string) | - | yes |
 | role_admin_enabled | Whether to enable AdministratorAccess IAM Role | bool | `true` | no |
 | role_alexa_enabled | Whether to enable AlexaDeveloper IAM Role | bool | `false` | no |
+| role_analyst_enabled | Whether to enable Analyst IAM Role (ReadOnly + AmazonAthenaFullAccess) | bool | `false` | no |
 | role_readonly_enabled | Whether to enable ReadOnlyAccess IAM Role | bool | `true` | no |
 | role_superadmin_enabled | Whether to enable SuperAdministratorAccess IAM Role (Administrator with ability to manage CloudTrail) | bool | `false` | no |
 | roles_max_session_duration | The maximum session duration (in seconds) that you want to set for the specified role. If you do not specify a value for this setting, the default maximum of one hour is applied. This setting can have a value from 1 hour to 12 hours. | number | `3600` | no |
@@ -22,6 +23,8 @@
 | role_admin_access_id | Name of Administrator Access IAM Role |
 | role_alexa_developer_arn | ARN of Administrator Access IAM Role |
 | role_alexa_developer_id | Name of Administrator Access IAM Role |
+| role_analyst_developer_arn | ARN of Analyst Access IAM Role |
+| role_analyst_developer_id | Name of Analyst Access IAM Role |
 | role_names | All created roles by module |
 | role_readonly_access_arn | ARN of Read Only Access IAM Role |
 | role_readonly_access_id | Name of Read Only Access IAM Role |

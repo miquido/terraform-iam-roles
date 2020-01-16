@@ -11,6 +11,7 @@ locals {
   role_readonly                      = "${var.roles_prefix}ReadOnlyAccess"
   role_alexa                         = "${var.roles_prefix}AlexaDeveloper"
   role_superadmin                    = "${var.roles_prefix}SuperAdministratorAccess"
+  role_analyst                       = "${var.roles_prefix}Analyst"
   policy_deny_ct_write               = "${var.policies_prefix}DenyCloudTrailWrite"
   policy_cloud_formation_full_access = "${var.policies_prefix}CloudFormationFullAccess"
   policy_iam_power_access            = "${var.policies_prefix}IAMRolePowerAccess"
@@ -129,6 +130,32 @@ resource "aws_iam_role_policy_attachment" "readonly-access-attach" {
   count      = var.role_readonly_enabled ? 1 : 0
   role       = aws_iam_role.readonly-access[0].name
   policy_arn = data.aws_iam_policy.readonly-access.arn
+}
+
+# Analyst
+
+resource "aws_iam_role" "analyst-access" {
+  count                = var.role_analyst_enabled ? 1 : 0
+  name                 = local.role_analyst
+  tags                 = local.tags
+  assume_role_policy   = data.aws_iam_policy_document.assume_role_policy.json
+  max_session_duration = var.roles_max_session_duration
+}
+
+data "aws_iam_policy" "athena-full-access" {
+  arn = "arn:aws:iam::aws:policy/AmazonAthenaFullAccess"
+}
+
+resource "aws_iam_role_policy_attachment" "analyst-readonly-access-attach" {
+  count      = var.role_analyst_enabled ? 1 : 0
+  role       = aws_iam_role.analyst-access[0].name
+  policy_arn = data.aws_iam_policy.readonly-access.arn
+}
+
+resource "aws_iam_role_policy_attachment" "analyst-athena-full-access-attach" {
+  count      = var.role_analyst_enabled ? 1 : 0
+  role       = aws_iam_role.analyst-access[0].name
+  policy_arn = data.aws_iam_policy.athena-full-access.arn
 }
 
 # Alexa developer

@@ -62,3 +62,9 @@ variable "role_alexa_enabled" {
   default     = false
   description = "Whether to enable AlexaDeveloper IAM Role"
 }
+
+variable "role_analyst_enabled" {
+  type        = bool
+  default     = false
+  description = "Whether to enable Analyst IAM Role (ReadOnly + AmazonAthenaFullAccess)"
+}

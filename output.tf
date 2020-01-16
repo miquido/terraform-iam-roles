@@ -7,6 +7,7 @@ output "role_names" {
       var.role_admin_enabled ? local.role_admin : "",
       var.role_readonly_enabled ? local.role_readonly : "",
       var.role_alexa_enabled ? local.role_alexa : "",
+      var.role_analyst_enabled ? local.role_analyst : "",
     ],
   )
 }
@@ -49,5 +50,15 @@ output "role_alexa_developer_arn" {
 output "role_alexa_developer_id" {
   description = "Name of Administrator Access IAM Role"
   value       = join("", aws_iam_role.alexa-developer.*.id)
+}
+
+output "role_analyst_developer_arn" {
+  description = "ARN of Analyst Access IAM Role"
+  value       = join("", aws_iam_role.analyst-access.*.arn)
+}
+
+output "role_analyst_developer_id" {
+  description = "Name of Analyst Access IAM Role"
+  value       = join("", aws_iam_role.analyst-access.*.id)
 }
 
