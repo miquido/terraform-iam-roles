@@ -31,6 +31,12 @@ data "aws_iam_policy_document" "assume_role_policy" {
       identifiers = var.principals
     }
 
+    condition {
+      test     = "Bool"
+      variable = "aws:SecureTransport"
+      values   = ["true"]
+    }
+
     dynamic "condition" {
       for_each = var.assume_role_mfa_enabled ? ["true"] : []
       content {
