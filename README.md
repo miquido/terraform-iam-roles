@@ -20,9 +20,7 @@ Roles provisioned by module:
 
     same as `AdministratorAccess` with ability to manage CloudTrail resources
 ---
-Terraform Module
-
-BitBucket Repository: https://bitbucket.org/miquido/terraform-iam-roles
+**Terraform Module**
 ## Usage
 
 ```hcl
@@ -87,8 +85,9 @@ module "iam-roles-account-two" {
   }
 }
 ```
+<!-- markdownlint-disable -->
 ## Makefile Targets
-```
+```text
 Available targets:
 
   help                                Help screen
@@ -97,46 +96,62 @@ Available targets:
   lint                                Lint Terraform code
 
 ```
+<!-- markdownlint-restore -->
+<!-- markdownlint-disable -->
+## Requirements
+
+| Name | Version |
+|------|---------|
+| terraform | >= 0.13 |
+| aws | >= 2.29.0 |
+
+## Providers
+
+| Name | Version |
+|------|---------|
+| aws | >= 2.29.0 |
+
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|:----:|:-----:|:-----:|
-| assume_role_external_id | Specify external ID required to assume enabled roles. Disabled if empty. See: https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-role.html#cli-configure-role-xaccount | string | `` | no |
-| assume_role_mfa_enabled | Whether to require MFA to assume enabled roles. See: https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-role.html#cli-configure-role-mfa | bool | `true` | no |
-| policies_prefix | Prefix added to created roles | string | `` | no |
-| principals | List of AWS Prinicpals to allow assuming created IAM roles (https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements_principal.html) | list(string) | - | yes |
-| role_admin_enabled | Whether to enable AdministratorAccess IAM Role | bool | `true` | no |
-| role_alexa_enabled | Whether to enable AlexaDeveloper IAM Role | bool | `false` | no |
-| role_analyst_enabled | Whether to enable Analyst IAM Role (ReadOnly + AmazonAthenaFullAccess) | bool | `false` | no |
-| role_readonly_enabled | Whether to enable ReadOnlyAccess IAM Role | bool | `true` | no |
-| role_superadmin_enabled | Whether to enable SuperAdministratorAccess IAM Role (Administrator with ability to manage CloudTrail) | bool | `false` | no |
-| roles_max_session_duration | The maximum session duration (in seconds) that you want to set for the specified role. If you do not specify a value for this setting, the default maximum of one hour is applied. This setting can have a value from 1 hour to 12 hours. | number | `3600` | no |
-| roles_prefix | Prefix added to created roles | string | `` | no |
-| tags | Additional tags to apply on all created resources | map(string) | `<map>` | no |
+|------|-------------|------|---------|:--------:|
+| assume\_role\_external\_id | Specify external ID required to assume enabled roles. Disabled if empty. See: https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-role.html#cli-configure-role-xaccount | `string` | `""` | no |
+| assume\_role\_mfa\_enabled | Whether to require MFA to assume enabled roles. See: https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-role.html#cli-configure-role-mfa | `bool` | `true` | no |
+| policies\_prefix | Prefix added to created roles | `string` | `""` | no |
+| principals | List of AWS Prinicpals to allow assuming created IAM roles (https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements_principal.html) | `list(string)` | n/a | yes |
+| role\_admin\_enabled | Whether to enable AdministratorAccess IAM Role | `bool` | `true` | no |
+| role\_alexa\_enabled | Whether to enable AlexaDeveloper IAM Role | `bool` | `false` | no |
+| role\_analyst\_enabled | Whether to enable Analyst IAM Role (ReadOnly + AmazonAthenaFullAccess) | `bool` | `false` | no |
+| role\_readonly\_enabled | Whether to enable ReadOnlyAccess IAM Role | `bool` | `true` | no |
+| role\_superadmin\_enabled | Whether to enable SuperAdministratorAccess IAM Role (Administrator with ability to manage CloudTrail) | `bool` | `false` | no |
+| roles\_max\_session\_duration | The maximum session duration (in seconds) that you want to set for the specified role. If you do not specify a value for this setting, the default maximum of one hour is applied. This setting can have a value from 1 hour to 12 hours. | `number` | `3600` | no |
+| roles\_prefix | Prefix added to created roles | `string` | `""` | no |
+| tags | Additional tags to apply on all created resources | `map(string)` | `{}` | no |
 
 ## Outputs
 
 | Name | Description |
 |------|-------------|
-| role_admin_access_arn | ARN of Administrator Access IAM Role |
-| role_admin_access_id | Name of Administrator Access IAM Role |
-| role_alexa_developer_arn | ARN of Administrator Access IAM Role |
-| role_alexa_developer_id | Name of Administrator Access IAM Role |
-| role_analyst_developer_arn | ARN of Analyst Access IAM Role |
-| role_analyst_developer_id | Name of Analyst Access IAM Role |
-| role_names | All created roles by module |
-| role_readonly_access_arn | ARN of Read Only Access IAM Role |
-| role_readonly_access_id | Name of Read Only Access IAM Role |
-| role_superadmin_access_arn | ARN of Administrator Access IAM Role (ability to manage CloudTrail) |
-| role_superadmin_access_id | Name of Administrator Access IAM Role (ability to manage CloudTrail) |
+| role\_admin\_access\_arn | ARN of Administrator Access IAM Role |
+| role\_admin\_access\_id | Name of Administrator Access IAM Role |
+| role\_alexa\_developer\_arn | ARN of Administrator Access IAM Role |
+| role\_alexa\_developer\_id | Name of Administrator Access IAM Role |
+| role\_analyst\_developer\_arn | ARN of Analyst Access IAM Role |
+| role\_analyst\_developer\_id | Name of Analyst Access IAM Role |
+| role\_names | All created roles by module |
+| role\_readonly\_access\_arn | ARN of Read Only Access IAM Role |
+| role\_readonly\_access\_id | Name of Read Only Access IAM Role |
+| role\_superadmin\_access\_arn | ARN of Administrator Access IAM Role (ability to manage CloudTrail) |
+| role\_superadmin\_access\_id | Name of Administrator Access IAM Role (ability to manage CloudTrail) |
 
+<!-- markdownlint-restore -->
 
 
 ## Developing
 
 1. Make changes in terraform files
 
-2. Regerate documentation
+2. Regenerate documentation
 
     ```bash
     bash <(curl -s https://terraform.s3.k.miquido.net/update.sh)
@@ -166,5 +181,7 @@ Copyright © 2017-2020 [Miquido](https://miquido.com)
 
   [logo]: https://www.miquido.com/img/logos/logo__miquido.svg
   [website]: https://www.miquido.com/
+  [gitlab]: https://gitlab.com/miquido
   [github]: https://github.com/miquido
   [bitbucket]: https://bitbucket.org/miquido
+

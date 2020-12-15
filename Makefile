@@ -9,5 +9,5 @@ export README_DEPS ?= docs/targets.md docs/terraform.md
 
 ## Lint Terraform code
 lint:
-	@cd examples/complete && terraform init && terraform validate
+	@cd examples/complete && terraform init && terraform fmt && terraform validate
 	@terraform fmt
