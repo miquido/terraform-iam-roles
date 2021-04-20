@@ -95,11 +95,9 @@ data "aws_iam_policy_document" "deny-ct-write" {
     actions = [
       "cloudtrail:PutEventSelectors",
       "cloudtrail:StopLogging",
-      "cloudtrail:StartLogging",
       "cloudtrail:AddTags",
       "cloudtrail:DeleteTrail",
       "cloudtrail:UpdateTrail",
-      "cloudtrail:CreateTrail",
       "cloudtrail:RemoveTags",
     ]
     resources = ["*"]
@@ -283,4 +281,3 @@ resource "aws_iam_role_policy_attachment" "alexa-developer-iam-role-power-access
   role       = aws_iam_role.alexa-developer[0].name
   policy_arn = aws_iam_policy.iam-role-power-access[0].arn
 }
-
