@@ -181,7 +181,7 @@ data "aws_iam_policy" "alexa-full-access" {
 }
 
 data "aws_iam_policy" "lambda-full-access" {
-  arn = "arn:aws:iam::aws:policy/AWSLambdaFullAccess"
+  arn = "arn:aws:iam::aws:policy/AWSLambda_FullAccess"
 }
 
 data "aws_iam_policy_document" "cloudformation-full-access" {
