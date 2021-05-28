@@ -22,7 +22,7 @@ data "aws_iam_policy_document" "assume_role_policy" {
   version = "2012-10-17"
 
   statement {
-    sid     = ""
+    sid     = "AllowAssumeRole"
     effect  = "Allow"
     actions = ["sts:AssumeRole"]
 
@@ -63,6 +63,7 @@ resource "aws_iam_role" "super-administrator-access" {
   tags                 = local.tags
   assume_role_policy   = data.aws_iam_policy_document.assume_role_policy.json
   max_session_duration = var.roles_max_session_duration
+  description          = "Role used by Miquido to assume access"
 }
 
 resource "aws_iam_role" "administrator-access" {
@@ -71,6 +72,7 @@ resource "aws_iam_role" "administrator-access" {
   tags                 = local.tags
   assume_role_policy   = data.aws_iam_policy_document.assume_role_policy.json
   max_session_duration = var.roles_max_session_duration
+  description          = "Role used by Miquido to assume access"
 }
 
 data "aws_iam_policy" "administrator-access" {
@@ -124,6 +126,7 @@ resource "aws_iam_role" "readonly-access" {
   tags                 = local.tags
   assume_role_policy   = data.aws_iam_policy_document.assume_role_policy.json
   max_session_duration = var.roles_max_session_duration
+  description          = "Role used by Miquido to assume access"
 }
 
 data "aws_iam_policy" "readonly-access" {
@@ -144,6 +147,7 @@ resource "aws_iam_role" "analyst-access" {
   tags                 = local.tags
   assume_role_policy   = data.aws_iam_policy_document.assume_role_policy.json
   max_session_duration = var.roles_max_session_duration
+  description          = "Role used by Miquido to assume access"
 }
 
 data "aws_iam_policy" "athena-full-access" {
@@ -170,6 +174,7 @@ resource "aws_iam_role" "alexa-developer" {
   tags                 = local.tags
   assume_role_policy   = data.aws_iam_policy_document.assume_role_policy.json
   max_session_duration = var.roles_max_session_duration
+  description          = "Role used by Miquido to assume access"
 }
 
 data "aws_iam_policy" "lex-full-access" {
