@@ -1,7 +1,7 @@
 include:
-  - remote: 'https://raw.githubusercontent.com/miquido/gitlab-templates/1.3.12/workflow-default.yml'
-  - remote: 'https://raw.githubusercontent.com/miquido/gitlab-templates/1.3.12/terraform-toolkit.yml'
-  - remote: 'https://raw.githubusercontent.com/miquido/gitlab-templates/1.3.12/git-toolkit.yml'
+  - remote: 'https://raw.githubusercontent.com/miquido/gitlab-templates/1.3.43/workflow-default.yml'
+  - remote: 'https://raw.githubusercontent.com/miquido/gitlab-templates/1.3.43/terraform-toolkit.yml'
+  - remote: 'https://raw.githubusercontent.com/miquido/gitlab-templates/1.3.43/git-toolkit.yml'
 
 get-latest-terraform:
   extends: .get-latest-terraform
@@ -10,7 +10,7 @@ check-formatting:
   extends: .check-formatting
 
 validate:
-  extends: .validate
+  extends: .validate-terraform
   variables:
     ENVIRONMENTS: examples/complete
 
