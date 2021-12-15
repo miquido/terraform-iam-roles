@@ -21,11 +21,15 @@ Roles provisioned by module:
     same as `AdministratorAccess` with ability to manage CloudTrail resources
 ---
 **Terraform Module**
+
+
+GitLab Repository: https://gitlab.com/miquido/terraform/miquido-iam-roles
+
 ## Usage
 
 ```hcl
 module "iam-roles" {
-  source = "git::ssh://git@bitbucket.org/miquido/terraform-iam-roles.git?ref=master"
+  source = "git::ssh://git@gitlab.com:miquido/terraform/terraform-iam-roles.git?ref=master"
   principals = ["xxxxx"]
 }
 ```
@@ -36,7 +40,7 @@ Not always all roles are desirable. To enable only one set of roles, use module 
 
 ```hcl
 module "iam-roles" {
-  source = "git::ssh://git@bitbucket.org/miquido/terraform-iam-roles.git?ref=master"
+  source = "git::ssh://git@gitlab.com:miquido/terraform/terraform-iam-roles.git?ref=master"
 
   principals            = ["xxxxx"]
   role_admin_enabled    = true
@@ -49,7 +53,7 @@ module "iam-roles" {
 #### To allow assuming roles from different AWS accounts you can provide serveal prinicipals
 
 module "iam-roles" {
-  source = "git::ssh://git@bitbucket.org/miquido/terraform-iam-roles.git?ref=master"
+  source = "git::ssh://git@gitlab.com:miquido/terraform/terraform-iam-roles.git?ref=master"
 
   principals = ["arn:aws:iam::xxxxone:root", "arn:aws:iam::xxxxtwo:root"]
 }
@@ -58,7 +62,7 @@ module "iam-roles" {
 
 ```hcl
 module "iam-roles-account-one" {
-  source = "git::ssh://git@bitbucket.org/miquido/terraform-iam-roles.git?ref=master"
+  source = "git::ssh://git@gitlab.com:miquido/terraform/terraform-iam-roles.git?ref=master"
 
   principals            = ["xxxxxone"]
   policies_prefix       = "AccountOne"
@@ -72,7 +76,7 @@ module "iam-roles-account-one" {
 }
 
 module "iam-roles-account-two" {
-  source = "git::ssh://git@bitbucket.org/miquido/terraform-iam-roles.git?ref=master"
+  source = "git::ssh://git@gitlab.com:miquido/terraform/terraform-iam-roles.git?ref=master"
 
   principals            = ["xxxxxtwo"]
   policies_prefix       = "AccountTwo"
