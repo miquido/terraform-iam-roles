@@ -69,9 +69,15 @@ variable "role_analyst_enabled" {
   description = "Whether to enable Analyst IAM Role (ReadOnly + AmazonAthenaFullAccess)"
 }
 
-variable "terraform_access" {
-  type        = bool
-  default     = false
-  description = "Allow Access from terraform roles"
+variable "admin_roles" {
+  type        = list(string)
+  default     = []
+  description = "Allow Access to admin from roles"
+}
+
+variable "readonly_roles" {
+  type        = list(string)
+  default     = []
+  description = "Allow Access to readonly from roles"
 
 }

@@ -56,7 +56,7 @@ data "aws_iam_policy_document" "assume_role_policy" {
     }
   }
   dynamic "statement" {
-    for_each = var.terraform_access == false ? [] : [1]
+    for_each = length(var.admin_roles) == 0 ? [] : [1]
     content {
       sid     = "AllowAssumeRoleTerraform"
       effect  = "Allow"
@@ -64,7 +64,7 @@ data "aws_iam_policy_document" "assume_role_policy" {
 
       principals {
         type        = "AWS"
-        identifiers = ["arn:aws:iam::892651288265:role/miquido-auth-terraform"]
+        identifiers = var.admin_roles
       }
 
       condition {
@@ -114,7 +114,7 @@ data "aws_iam_policy_document" "assume_role_policy-readonly" {
     }
   }
   dynamic "statement" {
-    for_each = var.terraform_access == false ? [] : [1]
+    for_each = length(var.readonly_roles) == 0 ? [] : [1]
     content {
       sid     = "AllowAssumeRoleTerraform"
       effect  = "Allow"
@@ -122,7 +122,7 @@ data "aws_iam_policy_document" "assume_role_policy-readonly" {
 
       principals {
         type        = "AWS"
-        identifiers = ["arn:aws:iam::892651288265:role/miquido-auth-terraform-readonly"]
+        identifiers = var.readonly_roles
       }
 
       condition {
