@@ -55,6 +55,83 @@ data "aws_iam_policy_document" "assume_role_policy" {
       }
     }
   }
+  dynamic "statement" {
+    for_each = var.terraform_access == false ? [] : [1]
+    content {
+      sid     = "AllowAssumeRoleTerraform"
+      effect  = "Allow"
+      actions = ["sts:AssumeRole"]
+
+      principals {
+        type        = "AWS"
+        identifiers = ["arn:aws:iam::892651288265:role/miquido-auth-terraform"]
+      }
+
+      condition {
+        test     = "Bool"
+        variable = "aws:SecureTransport"
+        values   = ["true"]
+      }
+    }
+  }
+}
+
+data "aws_iam_policy_document" "assume_role_policy-readonly" {
+  version = "2012-10-17"
+
+  statement {
+    sid     = "AllowAssumeRole"
+    effect  = "Allow"
+    actions = ["sts:AssumeRole"]
+
+    principals {
+      type        = "AWS"
+      identifiers = var.principals
+    }
+
+    condition {
+      test     = "Bool"
+      variable = "aws:SecureTransport"
+      values   = ["true"]
+    }
+
+    dynamic "condition" {
+      for_each = var.assume_role_mfa_enabled ? ["true"] : []
+      content {
+        test     = "Bool"
+        variable = "aws:MultiFactorAuthPresent"
+        values   = [condition.value]
+      }
+    }
+
+    dynamic "condition" {
+      for_each = var.assume_role_external_id == "" ? [] : [var.assume_role_external_id]
+      content {
+        test     = "StringEquals"
+        variable = "sts:ExternalId"
+        values   = [condition.value]
+      }
+    }
+  }
+  dynamic "statement" {
+    for_each = var.terraform_access == false ? [] : [1]
+    content {
+      sid     = "AllowAssumeRoleTerraform"
+      effect  = "Allow"
+      actions = ["sts:AssumeRole"]
+
+      principals {
+        type        = "AWS"
+        identifiers = ["arn:aws:iam::892651288265:role/miquido-auth-terraform-readonly"]
+      }
+
+      condition {
+        test     = "Bool"
+        variable = "aws:SecureTransport"
+        values   = ["true"]
+      }
+    }
+  }
 }
 
 resource "aws_iam_role" "super-administrator-access" {
@@ -124,7 +201,7 @@ resource "aws_iam_role" "readonly-access" {
   count                = var.role_readonly_enabled ? 1 : 0
   name                 = local.role_readonly
   tags                 = local.tags
-  assume_role_policy   = data.aws_iam_policy_document.assume_role_policy.json
+  assume_role_policy   = data.aws_iam_policy_document.assume_role_policy-readonly.json
   max_session_duration = var.roles_max_session_duration
   description          = "Role used by Miquido to assume access"
 }
