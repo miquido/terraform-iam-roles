@@ -168,33 +168,6 @@ resource "aws_iam_role_policy_attachment" "super-administrator-access-attach" {
   policy_arn = data.aws_iam_policy.administrator-access.arn
 }
 
-data "aws_iam_policy_document" "deny-ct-write" {
-  statement {
-    effect = "Deny"
-    actions = [
-      "cloudtrail:PutEventSelectors",
-      "cloudtrail:StopLogging",
-      "cloudtrail:AddTags",
-      "cloudtrail:DeleteTrail",
-      "cloudtrail:UpdateTrail",
-      "cloudtrail:RemoveTags",
-    ]
-    resources = ["*"]
-  }
-}
-
-resource "aws_iam_policy" "deny-ct-write" {
-  count  = var.role_admin_enabled ? 1 : 0
-  name   = local.policy_deny_ct_write
-  policy = data.aws_iam_policy_document.deny-ct-write.json
-}
-
-resource "aws_iam_role_policy_attachment" "deny-ct-write-attach" {
-  count      = var.role_admin_enabled ? 1 : 0
-  role       = aws_iam_role.administrator-access[0].name
-  policy_arn = aws_iam_policy.deny-ct-write[0].arn
-}
-
 # Read only access
 
 resource "aws_iam_role" "readonly-access" {
