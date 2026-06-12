@@ -1,9 +1,9 @@
 variable "principals" {
   type = list(object({
-    account_no    = string
-    sso           = optional(bool, true)
-    root          = optional(bool, false)
-    admin_roles   = optional(list(string), [])
+    account_no     = string
+    sso            = optional(bool, true)
+    root           = optional(bool, false)
+    admin_roles    = optional(list(string), [])
     readonly_roles = optional(list(string), [])
   }))
   description = "List of AWS account principals. sso=true adds SSO wildcard statement; root=true grants access to all IAM entities in the account; admin_roles/readonly_roles are specific role ARNs allowed to assume the respective roles."

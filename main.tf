@@ -15,8 +15,8 @@ locals {
     for p in var.principals : "arn:aws:iam::${p.account_no}:role/aws-reserved/sso.amazonaws.com/*/AWSReservedSSO_*"
     if p.sso
   ]
-  all_admin_roles    = flatten([for p in var.principals : p.admin_roles])
-  all_readonly_roles = flatten([for p in var.principals : p.readonly_roles])
+  all_admin_roles                    = flatten([for p in var.principals : p.admin_roles])
+  all_readonly_roles                 = flatten([for p in var.principals : p.readonly_roles])
   role_admin                         = "${var.roles_prefix}AdministratorAccess"
   role_readonly                      = "${var.roles_prefix}ReadOnlyAccess"
   role_alexa                         = "${var.roles_prefix}AlexaDeveloper"

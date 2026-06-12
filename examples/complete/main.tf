@@ -3,6 +3,14 @@ provider "aws" {
 }
 
 module "iam-roles" {
-  source     = "../.."
-  principals = ["xxxxx"]
+  source = "../.."
+  principals = [
+    {
+      account_no     = "123456789012"
+      sso            = true
+      root           = false
+      admin_roles    = []
+      readonly_roles = []
+    }
+  ]
 }
