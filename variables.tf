@@ -1,6 +1,12 @@
 variable "principals" {
-  type        = list(string)
-  description = "List of AWS Prinicpals to allow assuming created IAM roles (https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements_principal.html)"
+  type = list(object({
+    account_no    = string
+    sso           = optional(bool, true)
+    root          = optional(bool, false)
+    admin_roles   = optional(list(string), [])
+    readonly_roles = optional(list(string), [])
+  }))
+  description = "List of AWS account principals. sso=true adds SSO wildcard statement; root=true grants access to all IAM entities in the account; admin_roles/readonly_roles are specific role ARNs allowed to assume the respective roles."
 }
 
 variable "tags" {
@@ -69,15 +75,4 @@ variable "role_analyst_enabled" {
   description = "Whether to enable Analyst IAM Role (ReadOnly + AmazonAthenaFullAccess)"
 }
 
-variable "admin_roles" {
-  type        = list(string)
-  default     = []
-  description = "Allow Access to admin from roles"
-}
 
-variable "readonly_roles" {
-  type        = list(string)
-  default     = []
-  description = "Allow Access to readonly from roles"
-
-}

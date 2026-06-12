@@ -7,6 +7,16 @@ locals {
       "Provisioned-By" = "Miquido-IAM-Roles"
     },
   )
+  root_identifiers = [
+    for p in var.principals : "arn:aws:iam::${p.account_no}:root"
+    if p.root
+  ]
+  sso_role_arns = [
+    for p in var.principals : "arn:aws:iam::${p.account_no}:role/aws-reserved/sso.amazonaws.com/*/AWSReservedSSO_*"
+    if p.sso
+  ]
+  all_admin_roles    = flatten([for p in var.principals : p.admin_roles])
+  all_readonly_roles = flatten([for p in var.principals : p.readonly_roles])
   role_admin                         = "${var.roles_prefix}AdministratorAccess"
   role_readonly                      = "${var.roles_prefix}ReadOnlyAccess"
   role_alexa                         = "${var.roles_prefix}AlexaDeveloper"
@@ -21,42 +31,46 @@ locals {
 data "aws_iam_policy_document" "assume_role_policy" {
   version = "2012-10-17"
 
-  statement {
-    sid     = "AllowAssumeRole"
-    effect  = "Allow"
-    actions = ["sts:AssumeRole"]
+  dynamic "statement" {
+    for_each = length(local.root_identifiers) == 0 ? [] : [1]
+    content {
+      sid     = "AllowAssumeRole"
+      effect  = "Allow"
+      actions = ["sts:AssumeRole"]
 
-    principals {
-      type        = "AWS"
-      identifiers = var.principals
-    }
-
-    condition {
-      test     = "Bool"
-      variable = "aws:SecureTransport"
-      values   = ["true"]
-    }
-
-    dynamic "condition" {
-      for_each = var.assume_role_mfa_enabled ? ["true"] : []
-      content {
-        test     = "Bool"
-        variable = "aws:MultiFactorAuthPresent"
-        values   = [condition.value]
+      principals {
+        type        = "AWS"
+        identifiers = local.root_identifiers
       }
-    }
 
-    dynamic "condition" {
-      for_each = var.assume_role_external_id == "" ? [] : [var.assume_role_external_id]
-      content {
-        test     = "StringEquals"
-        variable = "sts:ExternalId"
-        values   = [condition.value]
+      condition {
+        test     = "Bool"
+        variable = "aws:SecureTransport"
+        values   = ["true"]
+      }
+
+      dynamic "condition" {
+        for_each = var.assume_role_mfa_enabled ? ["true"] : []
+        content {
+          test     = "Bool"
+          variable = "aws:MultiFactorAuthPresent"
+          values   = [condition.value]
+        }
+      }
+
+      dynamic "condition" {
+        for_each = var.assume_role_external_id == "" ? [] : [var.assume_role_external_id]
+        content {
+          test     = "StringEquals"
+          variable = "sts:ExternalId"
+          values   = [condition.value]
+        }
       }
     }
   }
+
   dynamic "statement" {
-    for_each = length(var.admin_roles) == 0 ? [] : [1]
+    for_each = length(local.all_admin_roles) == 0 ? [] : [1]
     content {
       sid     = "AllowAssumeRoleTerraform"
       effect  = "Allow"
@@ -64,13 +78,41 @@ data "aws_iam_policy_document" "assume_role_policy" {
 
       principals {
         type        = "AWS"
-        identifiers = var.admin_roles
+        identifiers = local.all_admin_roles
       }
 
       condition {
         test     = "Bool"
         variable = "aws:SecureTransport"
         values   = ["true"]
+      }
+    }
+  }
+
+  dynamic "statement" {
+    for_each = length(local.sso_role_arns) == 0 ? [] : [1]
+    content {
+      sid     = "AllowAssumeRoleSSO"
+      effect  = "Allow"
+      actions = ["sts:AssumeRole"]
+
+      principals {
+        type = "AWS"
+        identifiers = distinct([
+          for arn in local.sso_role_arns : "arn:aws:iam::${regex("arn:aws:iam::([0-9]{12}):", arn)[0]}:root"
+        ])
+      }
+
+      condition {
+        test     = "Bool"
+        variable = "aws:SecureTransport"
+        values   = ["true"]
+      }
+
+      condition {
+        test     = "ArnLike"
+        variable = "aws:PrincipalArn"
+        values   = local.sso_role_arns
       }
     }
   }
@@ -79,42 +121,46 @@ data "aws_iam_policy_document" "assume_role_policy" {
 data "aws_iam_policy_document" "assume_role_policy-readonly" {
   version = "2012-10-17"
 
-  statement {
-    sid     = "AllowAssumeRole"
-    effect  = "Allow"
-    actions = ["sts:AssumeRole"]
+  dynamic "statement" {
+    for_each = length(local.root_identifiers) == 0 ? [] : [1]
+    content {
+      sid     = "AllowAssumeRole"
+      effect  = "Allow"
+      actions = ["sts:AssumeRole"]
 
-    principals {
-      type        = "AWS"
-      identifiers = var.principals
-    }
-
-    condition {
-      test     = "Bool"
-      variable = "aws:SecureTransport"
-      values   = ["true"]
-    }
-
-    dynamic "condition" {
-      for_each = var.assume_role_mfa_enabled ? ["true"] : []
-      content {
-        test     = "Bool"
-        variable = "aws:MultiFactorAuthPresent"
-        values   = [condition.value]
+      principals {
+        type        = "AWS"
+        identifiers = local.root_identifiers
       }
-    }
 
-    dynamic "condition" {
-      for_each = var.assume_role_external_id == "" ? [] : [var.assume_role_external_id]
-      content {
-        test     = "StringEquals"
-        variable = "sts:ExternalId"
-        values   = [condition.value]
+      condition {
+        test     = "Bool"
+        variable = "aws:SecureTransport"
+        values   = ["true"]
+      }
+
+      dynamic "condition" {
+        for_each = var.assume_role_mfa_enabled ? ["true"] : []
+        content {
+          test     = "Bool"
+          variable = "aws:MultiFactorAuthPresent"
+          values   = [condition.value]
+        }
+      }
+
+      dynamic "condition" {
+        for_each = var.assume_role_external_id == "" ? [] : [var.assume_role_external_id]
+        content {
+          test     = "StringEquals"
+          variable = "sts:ExternalId"
+          values   = [condition.value]
+        }
       }
     }
   }
+
   dynamic "statement" {
-    for_each = length(var.readonly_roles) == 0 ? [] : [1]
+    for_each = length(local.all_readonly_roles) == 0 ? [] : [1]
     content {
       sid     = "AllowAssumeRoleTerraform"
       effect  = "Allow"
@@ -122,13 +168,41 @@ data "aws_iam_policy_document" "assume_role_policy-readonly" {
 
       principals {
         type        = "AWS"
-        identifiers = var.readonly_roles
+        identifiers = local.all_readonly_roles
       }
 
       condition {
         test     = "Bool"
         variable = "aws:SecureTransport"
         values   = ["true"]
+      }
+    }
+  }
+
+  dynamic "statement" {
+    for_each = length(local.sso_role_arns) == 0 ? [] : [1]
+    content {
+      sid     = "AllowAssumeRoleSSO"
+      effect  = "Allow"
+      actions = ["sts:AssumeRole"]
+
+      principals {
+        type = "AWS"
+        identifiers = distinct([
+          for arn in local.sso_role_arns : "arn:aws:iam::${regex("arn:aws:iam::([0-9]{12}):", arn)[0]}:root"
+        ])
+      }
+
+      condition {
+        test     = "Bool"
+        variable = "aws:SecureTransport"
+        values   = ["true"]
+      }
+
+      condition {
+        test     = "ArnLike"
+        variable = "aws:PrincipalArn"
+        values   = local.sso_role_arns
       }
     }
   }
