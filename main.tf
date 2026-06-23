@@ -18,8 +18,8 @@ locals {
   readonly_sso_accounts = [for p in var.readonly_principals : p.sso if p.sso != null]
   readonly_sso_arns     = [for account in local.readonly_sso_accounts : "arn:aws:iam::${account}:role/aws-reserved/sso.amazonaws.com/*/AWSReservedSSO_*"]
 
-  role_admin     = "${var.roles_prefix}AdministratorAccess"
-  role_readonly  = "${var.roles_prefix}ReadOnlyAccess"
+  role_admin    = "${var.roles_prefix}AdministratorAccess"
+  role_readonly = "${var.roles_prefix}ReadOnlyAccess"
 }
 
 data "aws_iam_policy_document" "assume_role_policy" {
